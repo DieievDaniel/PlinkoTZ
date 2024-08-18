@@ -2,14 +2,18 @@ using UnityEngine;
 
 public class BallSpawner : MonoBehaviour
 {
-    [SerializeField] private GameObject ballPrefab;
     [SerializeField] private Transform spawnPoint;
+    [SerializeField] private MoneyData moneyData;
 
     public void SpawnBall()
     {
-        if (ballPrefab != null && spawnPoint != null)
+        if (BallPool.Instance != null && spawnPoint != null && moneyData.Money >= moneyData.Bet)
         {
-            GameObject spawnedBall = Instantiate(ballPrefab, spawnPoint.position, Quaternion.identity);
+            moneyData.SubtractMoney();
+            GameUI.instance.DisplayUI();
+
+            GameObject spawnedBall = BallPool.Instance.GetBall();
+            spawnedBall.transform.position = spawnPoint.position;
             spawnedBall.transform.SetParent(spawnPoint.transform, false);
         }
     }
