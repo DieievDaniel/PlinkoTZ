@@ -6,6 +6,8 @@ public class TargetBoxTrigger : MonoBehaviour
     private MoneyData moneyData;
     private List<RectTransform> spawnedObjects = new List<RectTransform>();
     private Transform spawnPoint;
+    private bool hasTouchedTargetBox = false;
+    private BallSpawner ballSpawner;
 
     private void Start()
     {
@@ -16,10 +18,14 @@ public class TargetBoxTrigger : MonoBehaviour
         {
             spawnPoint = spawnPosObject.transform;
         }
+
+        ballSpawner = FindObjectOfType<BallSpawner>(); 
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (hasTouchedTargetBox) return;
+
         if (collision.gameObject.CompareTag("TargetBox"))
         {
             TargetMultiplier targetMultiplier = collision.gameObject.GetComponent<TargetMultiplier>();
@@ -32,27 +38,26 @@ public class TargetBoxTrigger : MonoBehaviour
                 GameObject spawnedObject = Instantiate(collision.gameObject);
                 RectTransform rectTransform = spawnedObject.GetComponent<RectTransform>();
 
-                if (rectTransform != null)
+                rectTransform.position = spawnPoint.position;
+                rectTransform.SetParent(spawnPoint, false);
+
+                BoxCollider2D boxCollider = spawnedObject.GetComponent<BoxCollider2D>();
+                if (boxCollider != null)
                 {
-                    rectTransform.position = spawnPoint.position;
-                    rectTransform.SetParent(spawnPoint, false);
+                    boxCollider.enabled = false;
+                }
 
-                    BoxCollider2D boxCollider = spawnedObject.GetComponent<BoxCollider2D>();
-                    if (boxCollider != null)
-                    {
-                        boxCollider.enabled = false;
-                    }
+                spawnedObjects.Add(rectTransform);
 
-                    foreach (RectTransform obj in spawnedObjects)
-                    {
-                        obj.anchoredPosition += new Vector2(70, 0);
-                    }
+                hasTouchedTargetBox = true;
 
-                    spawnedObjects.Add(rectTransform);
+                BallPool.Instance.ReturnBall(gameObject);
+
+                if (ballSpawner != null)
+                {
+                    ballSpawner.BallReturnedToPool();
                 }
             }
-
-            BallPool.Instance.ReturnBall(gameObject);
         }
     }
 }

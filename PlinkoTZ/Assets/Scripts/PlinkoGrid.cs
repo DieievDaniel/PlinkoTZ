@@ -3,7 +3,8 @@ using UnityEngine;
 public class PlinkoGrid : MonoBehaviour
 {
     [SerializeField] private GameObject prefab;
-    [SerializeField] private int rowCount;
+    [SerializeField] private int rowCount = 12;
+
     private void Start()
     {
         CreateGrid();
@@ -11,13 +12,12 @@ public class PlinkoGrid : MonoBehaviour
 
     private void CreateGrid()
     {
- 
-        int objectsPerRow = 3; 
+        int objectsPerRow = 3;
 
-        float startX = 0f; 
-        float startY = 539f; 
-        float offsetX = 70f; 
-        float offsetY = 70f; 
+        float startX = 0f;
+        float startY = 539f;
+        float offsetX = 70f;
+        float offsetY = 70f;
 
         for (int i = 0; i < rowCount; i++)
         {
@@ -35,7 +35,8 @@ public class PlinkoGrid : MonoBehaviour
                 }
             }
 
-            objectsPerRow = Mathf.Min(objectsPerRow + 1, 16); 
+            objectsPerRow = Mathf.Min(objectsPerRow + 1, 16);
         }
     }
+
 }
